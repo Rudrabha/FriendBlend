@@ -17,9 +17,14 @@ def detect_body(img):
 		cv2.rectangle(img,(x1,y1),(x+2*w,img.shape[0]),(255,255,0),2)  
 	return img
 
+
 def keypoints(img):
-    img_corrected = lab_contrast(img,7)
-    fast = cv2.FastFeatureDetector_create()
-    keypoints = fast.detect(img_corrected.copy())
-    return keypoints
+	img_corrected = lab_contrast(img,7)
+	fast = cv2.FastFeatureDetector_create()
+	keypoints = fast.detect(img_corrected.copy())
+	kp = []
+	for i in range(len(keypoints)):
+		kp.append([keypoints[i].pt[0], keypoints[i].pt[1]])
+	
+	return kp
 
