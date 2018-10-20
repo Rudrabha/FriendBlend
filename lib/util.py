@@ -1,3 +1,7 @@
+import cv2 
+import cv2 as cv
+import numpy as np
+
 def lab_contrast(img, f=7):
 	i_lab = cv.cvtColor(img, cv.COLOR_BGR2LAB)
 	i_lab_split = img1_lab = cv.split(i_lab)
