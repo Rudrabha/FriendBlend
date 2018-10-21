@@ -39,6 +39,18 @@ def keypoints_orb_matcher(img1, img2):
 	kp1 = list2pt(k1)
 	kp2 = list2pt(k2)
 
+def valid_keypoints(body1,body2,keypoints):
+    op_keypoints = keypoints.copy()
+    top_left_x1,top_left_y1,bot_right_x1,bot_right_y1=body1[0]
+    top_left_x2,top_left_y2,bot_right_x2,bot_right_y2=body2[0]
+    for i in range(len(keypoints)):
+        point = keypoints[i].pt
+        if (((point[0]<top_left_x1 or point[0]>bot_right_x1) or (point[1]<top_left_y1 or point[1]>bot_right_y1)) and ((point[0]<top_left_x2 or point[0]>bot_right_x2) or (point[1]<top_left_y2 or point[1]>bot_right_y2))):
+            continue
+        else:
+            op_keypoints.remove(keypoints[i])
+    return op_keypoints
+
 def L2_distance(pt1, pt2):
 	return np.linalg.norm(pt1-pt2)
 
