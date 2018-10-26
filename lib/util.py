@@ -44,12 +44,24 @@ def keypoints_orb_descriptor(img, kp, n=1000):
 	kp, des = orb.compute(img, kp)
 	return kp, des
 
-def keypoint_bf_matcher(img1, img2, kp1, kp2, des1, des2):
+def keypoint_bf_matcher(des1, des2, n=50):
 	bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 	matches = bf.match(des1,des2)
 	matches = sorted(matches, key = lambda x:x.distance)
-	return matches
+	return matches[0:n]
 
+def extract_matched_points(dmatches, kpts1, kpts2):
+	src_pts  = np.float32([kpts1[m.queryIdx].pt for m in dmatches]).reshape(-1,1,2)
+	dst_pts  = np.float32([kpts2[m.trainIdx].pt for m in dmatches]).reshape(-1,1,2)
+	return src_pts, dst_pts
+
+def calculate_homography_matrix(pts_src, pts_dst):
+	h, status = cv2.findHomography(pts_src, pts_dst)
+	return h
+
+def warp_perspective(img_src, img_dst, h):
+	im_out = cv2.warpPerspective(img_src, h, (img_dst.shape[1],img_dst.shape[0]))
+	return im_out
 
 def valid_keypoints(body1,body2,keypoints):
 	op_keypoints = keypoints.copy()
