@@ -34,8 +34,8 @@ def keypoints(img):
 	
 	return kp
 
-def keypoints_orb_matcher(img):
-	orb = cv.ORB_create(nfeatures=1000)
+def keypoints_orb_matcher(img, n=1000):
+	orb = cv.ORB_create(nfeatures=n)
 	k = orb.detect(img)
 	k = list2pt(k)
 	return k
