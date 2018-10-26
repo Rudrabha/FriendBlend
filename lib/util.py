@@ -37,6 +37,7 @@ def keypoints(img):
 def keypoints_orb_matcher(img):
 	orb = cv.ORB_create(nfeatures=1000)
 	k = orb.detect(img)
+	k = list2pt(k)
 	return k
 
 def valid_keypoints(body1,body2,keypoints):
