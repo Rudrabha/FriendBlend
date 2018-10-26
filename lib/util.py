@@ -34,12 +34,10 @@ def keypoints(img):
 	
 	return kp
 
-def keypoints_orb_matcher(img1, img2):
-	orb = cv.ORB_create(nfeatures=100)
-	k1 = orb.detect(img1)
-	k2 = orb.detect(img2)
-	kp1 = list2pt(k1)
-	kp2 = list2pt(k2)
+def keypoints_orb_matcher(img):
+	orb = cv.ORB_create(nfeatures=1000)
+	k = orb.detect(img)
+	return k
 
 def valid_keypoints(body1,body2,keypoints):
 	op_keypoints = keypoints.copy()
@@ -55,4 +53,11 @@ def valid_keypoints(body1,body2,keypoints):
 
 def L2_distance(pt1, pt2):
 	return np.linalg.norm(pt1-pt2)
+
+def list2pt(keypoints):
+	kp = []
+	for i in range(len(keypoints)):
+		kp.append([keypoints[i].pt[0], keypoints[i].pt[1]])
+	kp = np.asarray(kp)
+	return kp
 
