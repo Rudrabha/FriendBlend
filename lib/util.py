@@ -39,6 +39,18 @@ def keypoints_orb_detector(img, n=1000):
 	k = orb.detect(img)
 	return k
 
+def keypoints_orb_descriptor(img, kp, n=1000):
+	orb = cv.ORB_create(nfeatures=n)
+	kp, des = orb.compute(img, kp)
+	return kp, des
+
+def keypoint_bf_matcher(img1, img2, kp1, kp2, des1, des2):
+	bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+	matches = bf.match(des1,des2)
+	matches = sorted(matches, key = lambda x:x.distance)
+	return matches
+
+
 def valid_keypoints(body1,body2,keypoints):
 	op_keypoints = keypoints.copy()
 	top_left_x1,top_left_y1,bot_right_x1,bot_right_y1=body1[0]
