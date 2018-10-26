@@ -19,7 +19,7 @@ def detect_body(img):
 	for (x,y,w,h) in faces: 
 		x1 = int(x-1.5*w)
 		y1 = int(y-h)
-		cv2.rectangle(img,(x1,y1),(x+2*w,img.shape[0]),(255,255,0),2)
+		#cv2.rectangle(img,(x1,y1),(x+2*w,img.shape[0]),(255,255,0),2)
 		list1.append((x1,y1,x+2*w,img.shape[0]))
 	return list1, img
 
@@ -37,7 +37,6 @@ def keypoints(img):
 def keypoints_orb_matcher(img, n=1000):
 	orb = cv.ORB_create(nfeatures=n)
 	k = orb.detect(img)
-	k = list2pt(k)
 	return k
 
 def valid_keypoints(body1,body2,keypoints):
