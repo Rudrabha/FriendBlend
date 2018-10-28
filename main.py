@@ -8,7 +8,7 @@ Image_1 = cv2.imread("data/1.jpg")
 Image_2 = cv2.imread("data/2.jpg")
 
 x,y,_ = Image_1.shape
-Image_2 = cv2.resize(Image_2,(x,y))
+Image_2 = cv2.resize(Image_2,(y,x))
 
 Image_1 = lab_contrast(Image_1)
 Image_2 = lab_contrast(Image_2)
@@ -33,7 +33,6 @@ homography_matrix = calculate_homography_matrix(source_points, destination_point
 
 homography_warped_1 = warp_perspective(Image_1.copy(), homography_matrix)
 
-body_1_homographes  =
 op_image = 0.5 * homography_warped_1 + 0.5 * Image_2
 
 
