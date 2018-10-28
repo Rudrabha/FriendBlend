@@ -86,6 +86,6 @@ def list2pt(keypoints):
 
 def draw_keypoints(img, kp):
 	for i in range(len(kp)):
-		 cv2.circle(img,(int(kp[i][0]), int(kp[i][1])), 1, (0,0,255), -1)
+		 cv2.circle(img,(int(kp[i][0]), int(kp[i][1])), 10, (0,0,255), -1)
 	return img
 
