@@ -10,8 +10,8 @@ Image_2 = cv2.imread("data/2.jpg")
 Image_1 = lab_contrast(Image_1)
 Image_2 = lab_contrast(Image_2)
 
-keypoints_1 = keypoints_orb_detector(Image_1)
-keypoints_2 = keypoints_orb_detector(Image_2)
+keypoints_1 = keypoints_orb_detector(Image_1,10000)
+keypoints_2 = keypoints_orb_detector(Image_2,10000)
 
 body_1 = detect_body(Image_1)
 body_2 = detect_body(Image_2)
