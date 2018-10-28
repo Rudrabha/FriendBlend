@@ -86,6 +86,11 @@ def list2pt(keypoints):
 
 def draw_keypoints(img, kp):
 	for i in range(len(kp)):
-		 cv2.circle(img,(int(kp[i][0]), int(kp[i][1])), 10, (0,0,255), -1)
+		 cv2.circle(img,(int(kp[i][0]), int(kp[i][1])), 2, (0,0,255), -1)
 	return img
+
+def transform_points(pt1, homography_matrix):
+	new_points = cv2.perspectiveTransform(pt1, homography_matrix)
+	new_points = new_points.reshape((new_points.shape[0], new_points.shape[2]))
+	return new_points
 

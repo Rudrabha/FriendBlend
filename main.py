@@ -35,8 +35,7 @@ homography_warped_1 = warp_perspective(Image_1.copy(), homography_matrix)
 top_left_x1,top_left_y1,bot_right_x1,bot_right_y1=body_1[0]
 pt1 = np.float32([[[top_left_x1, top_left_y1]],[[bot_right_x1, top_left_y1]],[[top_left_x1, bot_right_y1]] ,[[bot_right_x1,bot_right_y1]]])
 
-new_points = cv2.perspectiveTransform(pt1, homography_matrix)
-new_points = new_points.reshape((new_points.shape[0], new_points.shape[2]))
+new_points = transform_points(pt1, homography_matrix)
 print (new_points.shape)
 op_image = draw_keypoints(homography_warped_1, new_points)
 #op_image = 0.5 * homography_warped_1 + 0.5 * Image_2
