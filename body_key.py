@@ -9,10 +9,10 @@ def draw_keypoints(img, kp):
 
 img = cv2.imread("data/1.jpg")
 img = util.lab_contrast(img)
-c1, img = util.detect_body(img)
+c1 = util.detect_body(img)
 img_2 = cv2.imread("data/2.jpg")
 img_2 = util.lab_contrast(img_2)
-c2, img_2 = util.detect_body(img_2)
+c2 = util.detect_body(img_2)
 
 k1 = util.keypoints_orb_detector(img, 10000)
 k2 = util.keypoints_orb_detector(img_2, 10000)
