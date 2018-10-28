@@ -58,8 +58,8 @@ def calculate_homography_matrix(pts_src, pts_dst):
 	h, status = cv2.findHomography(pts_src, pts_dst)
 	return h
 
-def warp_perspective(img_src, img_dst, h):
-	im_out = cv2.warpPerspective(img_src, h, (img_dst.shape[1],img_dst.shape[0]))
+def warp_perspective(img_src, h):
+	im_out = cv2.warpPerspective(img_src, h, (img_src.shape[1],img_src.shape[0]))
 	return im_out
 
 def valid_keypoints(body1,body2,keypoints):
