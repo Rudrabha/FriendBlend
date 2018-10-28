@@ -20,7 +20,7 @@ def detect_body(img):
 		x1 = int(x-1.5*w)
 		y1 = int(y-h)
 		list1.append((x1,y1,x+2*w,img.shape[0]))
-	return list1, img
+	return list1
 
 
 def keypoints(img):
