@@ -1,6 +1,6 @@
 import lib.util as util
 import cv2
-
+#Test
 def draw_keypoints(img, kp):
 	for i in range(len(kp)):
 		 cv2.circle(img,(int(kp[i][0]), int(kp[i][1])), 1, (0,0,255), -1)
