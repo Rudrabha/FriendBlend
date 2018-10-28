@@ -13,8 +13,8 @@ Image_2 = lab_contrast(Image_2)
 keypoints_1 = keypoints_orb_detector(Image_1)
 keypoints_2 = keypoints_orb_detector(Image_2)
 
-body_1, img1 = detect_body(Image_1)
-body_2, img2 = detect_body(Image_2)
+body_1 = detect_body(Image_1)
+body_2 = detect_body(Image_2)
 
 keypoints_valid_1 = valid_keypoints(body_1,body_2,keypoints_1)
 keypoints_valid_2 = valid_keypoints(body_1,body_2,keypoints_2)
