@@ -14,7 +14,7 @@ def lab_contrast(img, f=7):
 def detect_body(img):
 	face_cascade = cv2.CascadeClassifier('lib/haarcascade_frontalface_default.xml') 
 	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
-	faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+	faces = face_cascade.detectMultiScale(gray, 1.5, 5)
 	list1=[]
 	for (x,y,w,h) in faces: 
 		x1 = int(x-1.5*w)
