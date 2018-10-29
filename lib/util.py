@@ -100,7 +100,7 @@ def transform_points(pt1, homography_matrix):
 	new_points = new_points.reshape((new_points.shape[0], new_points.shape[2]))
 	return new_points
 
-<<<<<<< HEAD
+
 def alpha_blend(img1, img2, body1, body2):
     op = np.zeros(img1.shape)
     _,_,col_start,_ = body1[0]
@@ -117,7 +117,5 @@ def alpha_blend(img1, img2, body1, body2):
     op[:,0:col_start,:] = img1[:,0:col_start,:]
     op[:,col_end:,:] = img2[:,col_end:,:]
     return op
-=======
 
->>>>>>> b9a95d96a72664957d0234c6e0b5f9418f921ab1
 
