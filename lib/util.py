@@ -43,11 +43,17 @@ def keypoints_orb_descriptor(img, kp, n=1000):
 	kp, des = orb.compute(img, kp)
 	return kp, des
 
-def keypoint_bf_matcher(des1, des2, n=50):
+def keypoint_bf_matcher(des1, des2, n=4):
 	bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 	matches = bf.match(des1,des2)
 	matches = sorted(matches, key = lambda x:x.distance)
-	return matches[0:n]
+	min_dist = matches[0].distance	
+	for i in range(len(matches)):
+		print (matches[i].distance)	
+		if matches[i].distance > n*min_dist:
+			break
+	print (i)
+	return matches[0:37]
 
 def extract_matched_points(dmatches, kpts1, kpts2):
 	src_pts  = np.float32([kpts1[m.queryIdx].pt for m in dmatches]).reshape(-1,1,2)
@@ -93,4 +99,33 @@ def transform_points(pt1, homography_matrix):
 	new_points = cv2.perspectiveTransform(pt1, homography_matrix)
 	new_points = new_points.reshape((new_points.shape[0], new_points.shape[2]))
 	return new_points
+
+def homography_warp(Image_1, Image_2):
+	x,y,_ = Image_1.shape
+	Image_2 = cv2.resize(Image_2,(y,x))
+
+	Image_1 = lab_contrast(Image_1)
+	Image_2 = lab_contrast(Image_2)
+
+	keypoints_1 = keypoints_orb_detector(Image_1,10000)
+	keypoints_2 = keypoints_orb_detector(Image_2,10000)
+
+	body_1 = detect_body(Image_1)
+	body_2 = detect_body(Image_2)
+
+	keypoints_valid_1 = valid_keypoints(body_1,body_2,keypoints_1)
+	keypoints_valid_2 = valid_keypoints(body_1,body_2,keypoints_2)
+
+	_, descriptor1  = keypoints_orb_descriptor(Image_1,keypoints_valid_1, 10000)
+	_, descriptor2  = keypoints_orb_descriptor(Image_2,keypoints_valid_2, 10000)
+
+	keypoint_matches = keypoint_bf_matcher(descriptor1, descriptor2, 2)
+
+	source_points, destination_points = extract_matched_points(keypoint_matches, keypoints_valid_1, keypoints_valid_2)
+
+	homography_matrix = calculate_homography_matrix(source_points,  destination_points)
+
+	homography_warped_1 = warp_perspective(Image_1.copy(), homography_matrix)
+	return homography_warped_1
+
 
