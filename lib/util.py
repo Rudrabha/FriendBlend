@@ -49,7 +49,7 @@ def keypoint_bf_matcher(des1, des2, n=4):
 	matches = sorted(matches, key = lambda x:x.distance)
 	min_dist = matches[0].distance	
 	for i in range(len(matches)):
-		print (matches[i].distance)	
+#        print (matches[i].distance)    
 		if matches[i].distance > n*min_dist:
 			break
 	print (i)
