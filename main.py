@@ -29,13 +29,14 @@ keypoint_matches = keypoint_bf_matcher(descriptor1, descriptor2, 37)
 
 source_points, destination_points = extract_matched_points(keypoint_matches, keypoints_valid_1, keypoints_valid_2)
 
-homography_matrix = calculate_homography_matrix(source_points, destination_points)
+#homography_matrix = calculate_homography_matrix(source_points, destination_points)
+#
+#homography_warped_1 = warp_perspective(Image_1.copy(), homography_matrix)
+#top_left_x1,top_left_y1,bot_right_x1,bot_right_y1=body_1[0]
+#pt1 = np.float32([[[top_left_x1, top_left_y1]],[[bot_right_x1, top_left_y1]],[[top_left_x1, bot_right_y1]] ,[[bot_right_x1,bot_right_y1]]])
 
-homography_warped_1 = warp_perspective(Image_1.copy(), homography_matrix)
-top_left_x1,top_left_y1,bot_right_x1,bot_right_y1=body_1[0]
-pt1 = np.float32([[[top_left_x1, top_left_y1]],[[bot_right_x1, top_left_y1]],[[top_left_x1, bot_right_y1]] ,[[bot_right_x1,bot_right_y1]]])
-
-new_points = transform_points(pt1, homography_matrix)
-op_image = draw_keypoints(homography_warped_1, new_points)
+#new_points = transform_points(pt1, homography_matrix)
+#print(new_points)
+op_image = alpha_blend(Image_1,Image_2,body_1,body_2)
 cv2.imwrite("./data/alpha_blend.jpg", op_image)
 
