@@ -4,9 +4,11 @@ from lib.util import *
 
 #some error with homography
 #check
-Image_1 = cv2.imread("data/input/11.jpeg")
-Image_2 = cv2.imread("data/input/12.jpeg")
+#Image_1 = cv2.imread("data/input/11.jpeg")
+#Image_2 = cv2.imread("data/input/12.jpeg")
 
+Image_1 = cv2.imread("data/input/t_1.jpg")
+Image_2 = cv2.imread("data/input/t_2.jpg")
 x,y,_ = Image_1.shape
 Image_2 = cv2.resize(Image_2,(y,x))
 
@@ -23,6 +25,8 @@ if (len(body_1) == 0 or len(body_2) == 0):
     print("Exitting the process as **Face not detected in one/both Images**")
     sys.exit()
 
+cv2.imwrite("body_detect1.jpg",img_body1)
+cv2.imwrite("body_detect2.jpg",img_body2)
 
 keypoints_valid_1 = valid_keypoints(body_1,body_2,keypoints_1)
 keypoints_valid_2 = valid_keypoints(body_1,body_2,keypoints_2)
