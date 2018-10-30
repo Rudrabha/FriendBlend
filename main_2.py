@@ -4,8 +4,8 @@ from lib.util import *
 
 #some error with homography
 #check
-Image_1 = cv2.imread("data/1.jpg")
-Image_2 = cv2.imread("data/2.jpg")
+Image_1 = cv2.imread("data/1.jpeg")
+Image_2 = cv2.imread("data/2.jpeg")
 x,y,_ = Image_1.shape
 Image_2 = cv2.resize(Image_2,(y,x))
 
@@ -16,7 +16,9 @@ keypoints_1 = keypoints_orb_detector(Image_1,10000)
 keypoints_2 = keypoints_orb_detector(Image_2,10000)
 
 body_1 = detect_body(Image_1)
+print (body_1)
 body_2 = detect_body(Image_2)
+print (body_2)
 
 keypoints_valid_1 = valid_keypoints(body_1,body_2,keypoints_1)
 keypoints_valid_2 = valid_keypoints(body_1,body_2,keypoints_2)
@@ -33,5 +35,6 @@ homography_matrix = calculate_homography_matrix(source_points,  destination_poin
 homography_warped_1 = warp_perspective(Image_1.copy(), homography_matrix)
 
 op_image = 0.5*Image_2 + 0.5*homography_warped_1
+cv2.imwrite("op.jpg", op_image)
 
 
