@@ -4,11 +4,15 @@ from lib.util import *
 
 #some error with homography
 #check
-#Image_1 = cv2.imread("data/input/11.jpeg")
-#Image_2 = cv2.imread("data/input/12.jpeg")
 
-Image_1 = cv2.imread("data/input/t_1.jpg")
-Image_2 = cv2.imread("data/input/t_2.jpg")
+#Image_1 = cv2.imread("data/input/1.jpg")
+#Image_2 = cv2.imread("data/input/2.jpg")
+
+Image_1 = cv2.imread("data/input/a1.jpg")
+Image_2 = cv2.imread("data/input/a2.jpg")
+
+#Image_1 = cv2.imread("data/input/t_1.jpg")
+#Image_2 = cv2.imread("data/input/t_2.jpg")
 x,y,_ = Image_1.shape
 Image_2 = cv2.resize(Image_2,(y,x))
 
@@ -18,15 +22,15 @@ Image_2 = lab_contrast(Image_2)
 keypoints_1 = keypoints_orb_detector(Image_1,10000)
 keypoints_2 = keypoints_orb_detector(Image_2,10000)
 
-body_1, img_body1 = detect_body(Image_1)
-body_2, img_body2 = detect_body(Image_2)
+body_1, i_b1 = detect_body(Image_1.copy())
+body_2, i_b2 = detect_body(Image_2.copy())
 
 if (len(body_1) == 0 or len(body_2) == 0):
     print("Exitting the process as **Face not detected in one/both Images**")
     sys.exit()
 
-cv2.imwrite("body_detect1.jpg",img_body1)
-cv2.imwrite("body_detect2.jpg",img_body2)
+cv2.imwrite("body_detect1.jpg",i_b1)
+cv2.imwrite("body_detect2.jpg",i_b2)
 
 if (len(body_1) == 0 or len(body_2) == 0):
     print("Exitting the process as **Face not detected in one/both Images**")
