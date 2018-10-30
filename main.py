@@ -59,14 +59,11 @@ new_points[new_points<0] = 0
 new_points= new_points.astype(int)
 a,b = new_points[0]
 c,d = new_points[-1]
-<<<<<<< HEAD
 body_1_homographed = [(a,b,c,d)]
 op_image = alpha_blend(homography_warped_1,Image_2,body_1_homographed,body_2)
 cv2.imwrite("trial_outputs/im10_op.jpg", op_image)
-=======
 body_1_homographed = [(a,b,c,d,w,h)]
-#op_image = alpha_blend(homography_warped_1,Image_2,body_1_homographed,body_2)
 op_image = grabcut(homography_warped_1,Image_2,body_1_homographed,body_2)
 cv2.imwrite("trial_outputs/im1_op_grabcut.jpg", op_image)
->>>>>>> f467edd561414bfa28215df1b7695514cd537589
+
 
