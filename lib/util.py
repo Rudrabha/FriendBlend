@@ -1,4 +1,4 @@
-import cv2 
+import cv2,sys
 import cv2 as cv
 import numpy as np
 
@@ -26,15 +26,22 @@ def detect_body(img):
 #    list1=[]
     dist=0
     for (x,y,w,h) in faces:
-        x1 = int(x-int(2.2*w))
+        x1 = int(x-int(1.5*w))
+        if x1<0:
+            x1=0
         y1 = int(y-h)
+        if y1<0:
+            y1=0
         x2 = x+int(2.2*w)
+        if x2>img.shape[1]:
+            x2=img.shape[1]
         y2 = img.shape[0]
         area = ((x2-x1) * (y2-y1))
         if dist < area:
             dist = area
             list1 = [(x1,y1,x2,y2,w,h)]
     img = cv2.rectangle(img,(list1[0][0],list1[0][1]),(list1[0][2],list1[0][3]),(255,0,0),2)
+    img = cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
     return list1,img
 
 
@@ -111,9 +118,10 @@ def draw_keypoints(img, kp):
 	return img
 
 def transform_points(pt1, homography_matrix):
-	new_points = cv2.perspectiveTransform(pt1, homography_matrix)
-	new_points = new_points.reshape((new_points.shape[0], new_points.shape[2]))
-	return new_points
+    new_points = cv2.perspectiveTransform(pt1, homography_matrix)
+    new_points[new_points <0] = 0
+    new_points = new_points.reshape((new_points.shape[0], new_points.shape[2]))
+    return new_points
 
 def sort_order(img1,img2,body1,body2):
     col_start = body1[0][2]
@@ -130,19 +138,9 @@ def sort_order(img1,img2,body1,body2):
 
 def grabcut(img1,img2,body1,body2):
 
-    w1 = body1[0][4]
-    h1 = body1[0][5]
-    a1 = body1[0][0]
-    b1 = body1[0][1]
-    c1 = body1[0][2]
-    d1 = body1[0][3]
+    a1,b1,c1,d1,w1,h1 = body1[0]
+    a2,b2,c2,d2,w2,h2 = body2[0]
     
-    w2 = body2[0][4]
-    h2 = body2[0][5]
-    a2 = body2[0][0]
-    b2 = body2[0][1]
-    c2 = body2[0][2]
-    d2 = body2[0][3]
     mask = np.zeros(img1.shape[:2],np.uint8)
     bgdModel = np.zeros((1,65),np.float64)
     fgdModel = np.zeros((1,65),np.float64)
@@ -150,30 +148,39 @@ def grabcut(img1,img2,body1,body2):
         foreground = img1.copy()
         background = img2.copy()
         rect = (a1,b1,c1,d1)
-        for i in range(a1,c1-1):
-            for j in range(b1,d1-1):
+        for i in range(a1,c1):
+            for j in range(b1,d1):
                 mask[j,i] = cv2.GC_PR_FGD
-        for i in range(a1+int(2.2*w1),c1-int(2.2*w1)):
-            for j in range(b1+h1,b1+2*h1):
+        for i in range(a1+w1,c1-w1):
+            for j in range(b1+h1,b1+int(1*h1)):
                 mask[j,i] = cv2.GC_FGD
         cv2.grabCut(foreground, mask,rect,bgdModel,fgdModel,1,cv2.GC_INIT_WITH_MASK)
         mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
         img = foreground*mask2[:,:,np.newaxis]
-        cv.imwrite("foregroundcut.jpg",img)
+        return img
     else:
         foreground = img2.copy()
         background = img1.copy()
         rect = (a2,b2,c2,d2)
         for i in range(a2,c2):
             for j in range(b2,d2):
+#                sys.stdout.write('%s %s\r' %(i,j))
                 mask[j,i] = cv2.GC_PR_FGD
-        for i in range(a2+int(2*w2),c2-int(2*w2)):
-            for j in range(b2+h2,b2+2*h2):
+#                sys.stdout.flush()
+        for i in range(a2+w2,c2-w2):
+            for j in range(b2+h2,b2+int(1*h2)):
                 mask[j,i] = cv2.GC_FGD
         cv2.grabCut(foreground, mask,rect,bgdModel,fgdModel,1,cv2.GC_INIT_WITH_MASK)
         mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
         img = foreground*mask2[:,:,np.newaxis]
-        cv.imwrite("foregroundcut.jpg",img)
+        op_image = np.zeros(img1.shape)
+        for i in range(op_image.shape[0]):
+            for j in range(op_image.shape[1]):
+                if img[i,j,1]==0:
+                    op_image[i,j]=background[i,j]
+                else:
+                    op_image[i,j]=foreground[i,j]
+        return op_image
 
 def alpha_blend(img1, img2, body1, body2):
     op = np.zeros(img1.shape)
