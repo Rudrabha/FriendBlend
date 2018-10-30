@@ -6,8 +6,8 @@ from lib.util import *
 #check
 
 n_keypoints = 10000
-Image_1 = cv2.imread("dataset/im9_1.jpeg")
-Image_2 = cv2.imread("dataset/im9_2.jpeg")
+Image_1 = cv2.imread("dataset/im10_1.jpeg")
+Image_2 = cv2.imread("dataset/im10_2.jpeg")
 
 
 #Image_1 = cv2.imread("dataset/im1_1.jpeg")
@@ -62,7 +62,7 @@ c,d = new_points[-1]
 body_1_homographed = [(a,b,c,d)]
 op_image = alpha_blend(homography_warped_1,Image_2,body_1_homographed,body_2)
 op_image = crop_image(op_image, homography_matrix)
-cv2.imwrite("trial_outputs/im9_op.jpg", op_image)
+cv2.imwrite("trial_outputs/im10_op.jpg", op_image)
 '''
 body_1_homographed = [(a,b,c,d,w,h)]
 op_image = grabcut(homography_warped_1,Image_2,body_1_homographed,body_2)
