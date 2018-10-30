@@ -133,6 +133,10 @@ def sort_order(img1,img2,body1,body2):
         body2 = body_temp.copy()
     return img1,img2,body1,body2
 
+def blend_or_cut(body1,body2):
+    if body2[0][2]-body1[0][2]<30:
+        return "cut"
+
 def grabcut(img1,img2,body1,body2):
 
     a1,b1,c1,d1,w1,h1 = body1[0]
@@ -154,7 +158,14 @@ def grabcut(img1,img2,body1,body2):
         cv2.grabCut(foreground, mask,rect,bgdModel,fgdModel,1,cv2.GC_INIT_WITH_MASK)
         mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
         img = foreground*mask2[:,:,np.newaxis]
-        return img
+        op_image = np.zeros(img1.shape)
+        for i in range(op_image.shape[0]):
+            for j in range(op_image.shape[1]):
+                if img[i,j,1]==0:
+                    op_image[i,j]=background[i,j]
+                else:
+                    op_image[i,j]=foreground[i,j]
+        return op_image
     else:
         foreground = img2.copy()
         background = img1.copy()
