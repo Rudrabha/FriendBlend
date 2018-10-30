@@ -33,7 +33,7 @@ def detect_body(img):
         area = ((x2-x1) * (y2-y1))
         if dist < area:
             dist = area
-            list1 = [(x1,y1,x2,y2)]
+            list1 = [(x1,y1,x2,y2,w,h)]
     img = cv2.rectangle(img,(list1[0][0],list1[0][1]),(list1[0][2],list1[0][3]),(255,0,0),2)
     return list1,img
 
@@ -85,8 +85,8 @@ def warp_perspective(img_src, h):
 
 def valid_keypoints(body1,body2,keypoints):
 	op_keypoints = keypoints.copy()
-	top_left_x1,top_left_y1,bot_right_x1,bot_right_y1=body1[0]
-	top_left_x2,top_left_y2,bot_right_x2,bot_right_y2=body2[0]
+	top_left_x1,top_left_y1,bot_right_x1,bot_right_y1,_,_=body1[0]
+	top_left_x2,top_left_y2,bot_right_x2,bot_right_y2,_,_=body2[0]
 	for i in range(len(keypoints)):
 		point = keypoints[i].pt
 		if (((point[0]<top_left_x1 or point[0]>bot_right_x1) or (point[1]<top_left_y1 or point[1]>bot_right_y1)) and ((point[0]<top_left_x2 or point[0]>bot_right_x2) or (point[1]<top_left_y2 or point[1]>bot_right_y2))):
@@ -116,8 +116,8 @@ def transform_points(pt1, homography_matrix):
 	return new_points
 
 def sort_order(img1,img2,body1,body2):
-    _,_,col_start,_ = body1[0]
-    col_end,_,_,_ = body2[0]
+    col_start = body1[0][2]
+    col_end= body2[0][0]
     if col_start>col_end:
         print("swapping")
         img_temp = img1.copy()
@@ -130,8 +130,8 @@ def sort_order(img1,img2,body1,body2):
 
 def alpha_blend(img1, img2, body1, body2):
     op = np.zeros(img1.shape)
-    _,_,col_start,_ = body1[0]
-    col_end,_,_,_ = body2[0]
+    col_start = body1[0][2]
+    col_end= body2[0][0]
 #    print(col_start)
 #    print(col_end)
     if col_start>col_end:
@@ -143,8 +143,8 @@ def alpha_blend(img1, img2, body1, body2):
         body1 = body2.copy()
         body2 = body_temp.copy()
         op = np.zeros(img1.shape)
-        _,_,col_start,_ = body1[0]
-        col_end,_,_,_ = body2[0]
+        col_start = body1[0][2]
+        col_end = body2[0][0]
     
     step_size = 1/(col_end-col_start)
     for x in range(col_start,col_end):

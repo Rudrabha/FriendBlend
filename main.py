@@ -5,14 +5,9 @@ from lib.util import *
 #some error with homography
 #check
 
-#Image_1 = cv2.imread("data/input/1.jpg")
-#Image_2 = cv2.imread("data/input/2.jpg")
+Image_1 = cv2.imread("dataset/im3_1.jpeg")
+Image_2 = cv2.imread("dataset/im3_2.jpeg")
 
-Image_1 = cv2.imread("dataset/im9_1.jpeg")
-Image_2 = cv2.imread("dataset/im9_2.jpeg")
-
-#Image_1 = cv2.imread("data/input/t_1.jpg")
-#Image_2 = cv2.imread("data/input/t_2.jpg")
 x,y,_ = Image_1.shape
 Image_2 = cv2.resize(Image_2,(y,x))
 
@@ -53,7 +48,7 @@ homography_matrix = calculate_homography_matrix(source_points, destination_point
 #
 homography_warped_1 = warp_perspective(Image_1.copy(), homography_matrix)
 
-top_left_x1,top_left_y1,bot_right_x1,bot_right_y1=body_1[0]
+top_left_x1,top_left_y1,bot_right_x1,bot_right_y1,_,_=body_1[0]
 pt1 = np.float32([[[top_left_x1, top_left_y1]],[[bot_right_x1, top_left_y1]],[[top_left_x1, bot_right_y1]] ,[[bot_right_x1,bot_right_y1]]])
 
 new_points = transform_points(pt1, homography_matrix)
@@ -63,5 +58,5 @@ a,b = new_points[0]
 c,d = new_points[-1]
 body_1_homographed = [(a,b,c,d)]
 op_image = alpha_blend(homography_warped_1,Image_2,body_1_homographed,body_2)
-cv2.imwrite("trial_outputs/im9_op.jpg", op_image)
+cv2.imwrite("trial_outputs/im3_op.jpg", op_image)
 
