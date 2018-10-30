@@ -40,8 +40,8 @@ def detect_body(img):
         if dist < area:
             dist = area
             list1 = [(x1,y1,x2,y2,w,h)]
-    img = cv2.rectangle(img,(list1[0][0],list1[0][1]),(list1[0][2],list1[0][3]),(255,0,0),2)
-    img = cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
+#    img = cv2.rectangle(img,(list1[0][0],list1[0][1]),(list1[0][2],list1[0][3]),(255,0,0),2)
+#    img = cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
     return list1,img
 
 
