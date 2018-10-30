@@ -4,15 +4,15 @@ from lib.util import *
 
 #some error with homography
 #check
-<<<<<<< HEAD
+
 n_keypoints = 10000
 Image_1 = cv2.imread("dataset/im10_1.jpeg")
 Image_2 = cv2.imread("dataset/im10_2.jpeg")
-=======
+
 
 Image_1 = cv2.imread("dataset/im1_1.jpeg")
 Image_2 = cv2.imread("dataset/im1_2.jpeg")
->>>>>>> f467edd561414bfa28215df1b7695514cd537589
+
 
 x,y,_ = Image_1.shape
 Image_2 = cv2.resize(Image_2,(y,x))
