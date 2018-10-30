@@ -58,17 +58,14 @@ def keypoints_orb_descriptor(img, kp, n=1000):
 	kp, des = orb.compute(img, kp)
 	return kp, des
 
-def keypoint_bf_matcher(des1, des2, n=4):
+def keypoint_bf_matcher(des1, des2, n=40):
 	bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 	matches = bf.match(des1,des2)
 	matches = sorted(matches, key = lambda x:x.distance)
 	min_dist = matches[0].distance	
-	for i in range(len(matches)):
-#        print (matches[i].distance)
-		if matches[i].distance > n*min_dist:
-			break
-#    print (i)
-	return matches[0:37]
+	if (len(matches) < 500):
+		n = 20
+	return matches[0:n]
 
 def extract_matched_points(dmatches, kpts1, kpts2):
 	src_pts  = np.float32([kpts1[m.queryIdx].pt for m in dmatches]).reshape(-1,1,2)
