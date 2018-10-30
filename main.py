@@ -28,6 +28,10 @@ if (len(body_1) == 0 or len(body_2) == 0):
 cv2.imwrite("body_detect1.jpg",img_body1)
 cv2.imwrite("body_detect2.jpg",img_body2)
 
+if (len(body_1) == 0 or len(body_2) == 0):
+    print("Exitting the process as **Face not detected in one/both Images**")
+    sys.exit()
+
 keypoints_valid_1 = valid_keypoints(body_1,body_2,keypoints_1)
 keypoints_valid_2 = valid_keypoints(body_1,body_2,keypoints_2)
 
