@@ -19,6 +19,10 @@ keypoints_2 = keypoints_orb_detector(Image_2,10000)
 body_1 = detect_body(Image_1)
 body_2 = detect_body(Image_2)
 
+if (len(body_1) == 0 or len(body_2) == 0):
+    print("Exitting the process as **Face not detected in one/both Images**")
+    sys.exit()
+
 keypoints_valid_1 = valid_keypoints(body_1,body_2,keypoints_1)
 keypoints_valid_2 = valid_keypoints(body_1,body_2,keypoints_2)
 
