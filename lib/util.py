@@ -115,20 +115,43 @@ def transform_points(pt1, homography_matrix):
 	new_points = new_points.reshape((new_points.shape[0], new_points.shape[2]))
 	return new_points
 
+def sort_order(img1,img2,body1,body2):
+    _,_,col_start,_ = body1[0]
+    col_end,_,_,_ = body2[0]
+    if col_start>col_end:
+        print("swapping")
+        img_temp = img1.copy()
+        img1=img2.copy()
+        img2 = img_temp.copy()
+        body_temp =body1.copy()
+        body1 = body2.copy()
+        body2 = body_temp.copy()
+    return img1,img2,body1,body2
 
 def alpha_blend(img1, img2, body1, body2):
     op = np.zeros(img1.shape)
     _,_,col_start,_ = body1[0]
     col_end,_,_,_ = body2[0]
-#    print(body1,body2)
-#    print(col_start,col_end)
-
+#    print(col_start)
+#    print(col_end)
+    if col_start>col_end:
+#        print("swapping")
+        img_temp = img1.copy()
+        img1=img2.copy()
+        img2 = img_temp.copy()
+        body_temp =body1.copy()
+        body1 = body2.copy()
+        body2 = body_temp.copy()
+        op = np.zeros(img1.shape)
+        _,_,col_start,_ = body1[0]
+        col_end,_,_,_ = body2[0]
+    
     step_size = 1/(col_end-col_start)
-    for x in range(col_start,col_end+1):
+    for x in range(col_start,col_end):
         step_count = x-col_start
         op[:,x,0] = ((1-(step_count*step_size))*img1[:,x,0])+((step_count*step_size)*img2[:,x,0])
-        op[:,x,1] = ((1-(step_count*step_size))*img1[:,x,0])+((step_count*step_size)*img2[:,x,1])
-        op[:,x,2] = ((1-(step_count*step_size))*img1[:,x,0])+((step_count*step_size)*img2[:,x,2])
+        op[:,x,1] = ((1-(step_count*step_size))*img1[:,x,1])+((step_count*step_size)*img2[:,x,1])
+        op[:,x,2] = ((1-(step_count*step_size))*img1[:,x,2])+((step_count*step_size)*img2[:,x,2])
     op[:,0:col_start,:] = img1[:,0:col_start,:]
     op[:,col_end:,:] = img2[:,col_end:,:]
     return op
