@@ -8,8 +8,8 @@ from lib.util import *
 #Image_1 = cv2.imread("data/input/1.jpg")
 #Image_2 = cv2.imread("data/input/2.jpg")
 
-Image_1 = cv2.imread("dataset/im1_1.jpeg")
-Image_2 = cv2.imread("dataset/im1_2.jpeg")
+Image_1 = cv2.imread("dataset/im9_1.jpeg")
+Image_2 = cv2.imread("dataset/im9_2.jpeg")
 
 #Image_1 = cv2.imread("data/input/t_1.jpg")
 #Image_2 = cv2.imread("data/input/t_2.jpg")
@@ -63,5 +63,5 @@ a,b = new_points[0]
 c,d = new_points[-1]
 body_1_homographed = [(a,b,c,d)]
 op_image = alpha_blend(homography_warped_1,Image_2,body_1_homographed,body_2)
-cv2.imwrite("trial_outputs/im1_op.jpg", op_image)
+cv2.imwrite("trial_outputs/im9_op.jpg", op_image)
 
