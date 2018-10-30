@@ -66,11 +66,10 @@ cv2.imwrite("trial_outputs/im9_op.jpg", op_image)
 '''
 body_1_homographed = [(a,b,c,d,w,h)]
 op_image = grabcut(homography_warped_1,Image_2,body_1_homographed,body_2)
-<<<<<<< HEAD
 cv2.imwrite("trial_outputs/im10_op_grabcut.jpg", op_image)
 =======
 cv2.imwrite("trial_outputs/im9_op_grabcut.jpg", op_image)
 '''
->>>>>>> e47a5a97ef1e99c19e85bcb4982fbbf7eee69470
+
 
 
