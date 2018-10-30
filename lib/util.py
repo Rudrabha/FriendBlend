@@ -12,15 +12,16 @@ def lab_contrast(img, f=7):
 	return op_img
 
 def detect_body(img):
-	face_cascade = cv2.CascadeClassifier('lib/haarcascade_frontalface_default.xml') 
-	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
-	faces = face_cascade.detectMultiScale(gray, 1.5, 5)
-	list1=[]
-	for (x,y,w,h) in faces: 
-		x1 = int(x-1.5*w)
-		y1 = int(y-h)
-		list1.append((x1,y1,x+2*w,img.shape[0]))
-	return list1
+    face_cascade = cv2.CascadeClassifier('lib/haarcascade_frontalface_default.xml')
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(gray, 1.5, 5)
+    list1=[]
+    for (x,y,w,h) in faces:
+        x1 = int(x-1.5*w)
+        y1 = int(y-h)
+        list1.append((x1,y1,x+2*w,img.shape[0]))
+        img = cv2.rectangle(img,(x1,y1),(x+2*w,img.shape[0]),(255,0,0),2)
+    return list1,img
 
 
 def keypoints(img):
