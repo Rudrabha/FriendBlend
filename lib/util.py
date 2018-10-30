@@ -216,4 +216,14 @@ def alpha_blend(img1, img2, body1, body2):
     op[:,col_end:,:] = img2[:,col_end:,:]
     return op
 
+def crop_image(img, H):
+	rows, cols, channels = img.shape
+	pts = np.float32([[0, 0], [cols, 0], [cols, rows], [0, rows]]).reshape(-1,
+		                                                           1, 2)
+	warp_points = cv2.perspectiveTransform(pts, H)
+	top_row = int(max(max(warp_points[0][0][1], warp_points[1][0][1]), 0))
+	bottom_row = int(min(min(warp_points[2][0][1], warp_points[3][0][1]), rows))
+
+	return img[top_row:bottom_row, 0:cols]
+
 
