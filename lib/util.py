@@ -26,7 +26,7 @@ def detect_body(img):
 #    list1=[]
     dist=0
     for (x,y,w,h) in faces:
-        x1 = int(x-1.5*w)
+        x1 = int(x-int(2.2*w))
         y1 = int(y-h)
         x2 = x+int(2.2*w)
         y2 = img.shape[0]
@@ -128,12 +128,57 @@ def sort_order(img1,img2,body1,body2):
         body2 = body_temp.copy()
     return img1,img2,body1,body2
 
+def grabcut(img1,img2,body1,body2):
+
+    w1 = body1[0][4]
+    h1 = body1[0][5]
+    a1 = body1[0][0]
+    b1 = body1[0][1]
+    c1 = body1[0][2]
+    d1 = body1[0][3]
+    
+    w2 = body2[0][4]
+    h2 = body2[0][5]
+    a2 = body2[0][0]
+    b2 = body2[0][1]
+    c2 = body2[0][2]
+    d2 = body2[0][3]
+    mask = np.zeros(img1.shape[:2],np.uint8)
+    bgdModel = np.zeros((1,65),np.float64)
+    fgdModel = np.zeros((1,65),np.float64)
+    if w1*h1 > w2*h2:
+        foreground = img1.copy()
+        background = img2.copy()
+        rect = (a1,b1,c1,d1)
+        for i in range(a1,c1-1):
+            for j in range(b1,d1-1):
+                mask[j,i] = cv2.GC_PR_FGD
+        for i in range(a1+int(2.2*w1),c1-int(2.2*w1)):
+            for j in range(b1+h1,b1+2*h1):
+                mask[j,i] = cv2.GC_FGD
+        cv2.grabCut(foreground, mask,rect,bgdModel,fgdModel,1,cv2.GC_INIT_WITH_MASK)
+        mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
+        img = foreground*mask2[:,:,np.newaxis]
+        cv.imwrite("foregroundcut.jpg",img)
+    else:
+        foreground = img2.copy()
+        background = img1.copy()
+        rect = (a2,b2,c2,d2)
+        for i in range(a2,c2):
+            for j in range(b2,d2):
+                mask[j,i] = cv2.GC_PR_FGD
+        for i in range(a2+int(2*w2),c2-int(2*w2)):
+            for j in range(b2+h2,b2+2*h2):
+                mask[j,i] = cv2.GC_FGD
+        cv2.grabCut(foreground, mask,rect,bgdModel,fgdModel,1,cv2.GC_INIT_WITH_MASK)
+        mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
+        img = foreground*mask2[:,:,np.newaxis]
+        cv.imwrite("foregroundcut.jpg",img)
+
 def alpha_blend(img1, img2, body1, body2):
     op = np.zeros(img1.shape)
     col_start = body1[0][2]
     col_end= body2[0][0]
-#    print(col_start)
-#    print(col_end)
     if col_start>col_end:
 #        print("swapping")
         img_temp = img1.copy()
