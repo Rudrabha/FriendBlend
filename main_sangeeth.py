@@ -67,16 +67,26 @@ new_points[new_points<0] = 0
 new_points= new_points.astype(int)
 a,b = new_points[0]
 c,d = new_points[-1]
+
+if blend_or_cut(body_1,body_2)=="grabcut":
+    body_1_homographed = [(a,b,c,d,w,h)]
+    grab,bck = grabcut(homography_warped_1,Image_2,body_1_homographed,body_2)
+    op_image = blend_cropped_image(bck,grab)
+else:
+    body_1_homographed = [(a,b,c,d)]
+    op_image = alpha_blend(homography_warped_1,Image_2,body_1_homographed,body_2)
+    op_image = crop_image(op_image, homography_matrix)
+
 #body_1_homographed = [(a,b,c,d)]
 #op_image = alpha_blend(homography_warped_1,Image_2,body_1_homographed,body_2)
 #op_image = crop_image(op_image, homography_matrix)
-#cv2.imwrite("trial_outputs/im10_op.jpg", op_image)
-
-
-body_1_homographed = [(a,b,c,d,w,h)]
-grab,bck = grabcut(homography_warped_1,Image_2,body_1_homographed,body_2)
-op_image = blend_cropped_image(bck,grab)
-cv2.imwrite("new_grabcut/im10_op_grabcut.jpg", op_image)
+cv2.imwrite("trial_outputs/im10_op.jpg", op_image)
+#
+#
+#body_1_homographed = [(a,b,c,d,w,h)]
+#grab,bck = grabcut(homography_warped_1,Image_2,body_1_homographed,body_2)
+#op_image = blend_cropped_image(bck,grab)
+#cv2.imwrite("new_grabcut/im10_op_grabcut.jpg", op_image)
 #cv2.imwrite("trial_outputs/im9_op_grabcut.jpg", op_image)
 
 
