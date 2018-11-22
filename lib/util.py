@@ -40,8 +40,8 @@ def detect_body(img):
         if dist < area:
             dist = area
             list1 = [(x1,y1,x2,y2,w,h)]
-#    img = cv2.rectangle(img,(list1[0][0],list1[0][1]),(list1[0][2],list1[0][3]),(255,0,0),2)
-#    img = cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
+    img = cv2.rectangle(img,(list1[0][0],list1[0][1]),(list1[0][2],list1[0][3]),(255,0,0),2)
+    img = cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
     return list1,img
 
 
@@ -143,8 +143,8 @@ def grabcut(img1,img2,body1,body2):
     a2,b2,c2,d2,w2,h2 = body2[0]
     
     mask = np.zeros(img1.shape[:2],np.uint8)
-    bgdModel = np.zeros((1,65),np.float64)
-    fgdModel = np.zeros((1,65),np.float64)
+    backgroundModel = np.zeros((1,65),np.float64)
+    foregroundModel = np.zeros((1,65),np.float64)
     if w1*h1 > w2*h2:
         foreground = img1.copy()
         background = img2.copy()
@@ -152,20 +152,20 @@ def grabcut(img1,img2,body1,body2):
         for i in range(a1,c1):
             for j in range(b1,d1):
                 mask[j,i] = cv2.GC_PR_FGD
-        for i in range(a1+w1,c1-w1):
-            for j in range(b1+h1,b1+int(1*h1)):
+        for i in range(a1+w1-5,c1-w1+5):
+            for j in range(b1+h1-5,b1+int(1*h1)+5):
                 mask[j,i] = cv2.GC_FGD
-        cv2.grabCut(foreground, mask,rect,bgdModel,fgdModel,1,cv2.GC_INIT_WITH_MASK)
+        cv2.grabCut(foreground, mask,rect,backgroundModel,foregroundModel,1,cv2.GC_INIT_WITH_MASK)
         mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
         img = foreground*mask2[:,:,np.newaxis]
-        op_image = np.zeros(img1.shape)
-        for i in range(op_image.shape[0]):
-            for j in range(op_image.shape[1]):
-                if img[i,j,1]==0:
-                    op_image[i,j]=background[i,j]
-                else:
-                    op_image[i,j]=foreground[i,j]
-        return op_image
+#        op_image = np.zeros(img1.shape)
+#        for i in range(op_image.shape[0]):
+#            for j in range(op_image.shape[1]):
+#                if img[i,j,1]==0:
+#                    op_image[i,j]=background[i,j]
+#                else:
+#                    op_image[i,j]=foreground[i,j]
+        return img,background
     else:
         foreground = img2.copy()
         background = img1.copy()
@@ -175,20 +175,20 @@ def grabcut(img1,img2,body1,body2):
 #                sys.stdout.write('%s %s\r' %(i,j))
                 mask[j,i] = cv2.GC_PR_FGD
 #                sys.stdout.flush()
-        for i in range(a2+w2,c2-w2):
-            for j in range(b2+h2,b2+int(1*h2)):
+        for i in range(a2+w2-5,c2-w2+5):
+            for j in range(b2+h2-5,b2+int(1*h2)+5):
                 mask[j,i] = cv2.GC_FGD
-        cv2.grabCut(foreground, mask,rect,bgdModel,fgdModel,1,cv2.GC_INIT_WITH_MASK)
+        cv2.grabCut(foreground, mask,rect,backgroundModel,foregroundModel,1,cv2.GC_INIT_WITH_MASK)
         mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
         img = foreground*mask2[:,:,np.newaxis]
-        op_image = np.zeros(img1.shape)
-        for i in range(op_image.shape[0]):
-            for j in range(op_image.shape[1]):
-                if img[i,j,1]==0:
-                    op_image[i,j]=background[i,j]
-                else:
-                    op_image[i,j]=foreground[i,j]
-        return op_image
+#        op_image = np.zeros(img1.shape)
+#        for i in range(op_image.shape[0]):
+#            for j in range(op_image.shape[1]):
+#                if img[i,j,1]==0:
+#                    op_image[i,j]=background[i,j]
+#                else:
+#                    op_image[i,j]=foreground[i,j]
+        return img,background
 
 def alpha_blend(img1, img2, body1, body2):
     op = np.zeros(img1.shape)
@@ -225,5 +225,38 @@ def crop_image(img, H):
 	bottom_row = int(min(min(warp_points[2][0][1], warp_points[3][0][1]), rows))
 
 	return img[top_row:bottom_row, 0:cols]
+
+def blend_cropped_image(background_img, input_img):
+    
+    height, width, channels = input_img.shape
+    cropped_img_binary = np.zeros((height, width, 1), np.uint8)
+    cropped_img_gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
+    cv2.threshold(cropped_img_gray, 0, 255, cv2.THRESH_BINARY, cropped_img_binary)
+#    print(cropped_img_gray.shape)
+#    print(cropped_img_binary.shape)
+#    input("ENter")
+    concat_image = np.concatenate((cropped_img_gray, cropped_img_binary[:,:,0]),axis=1)
+    merged_img = np.uint8((255 - cropped_img_binary) / 255) * background_img + input_img
+    element_sizes = [(5, 0)]
+    outer_mask = cropped_img_binary
+    for erosion_size, fore_coeff in element_sizes:
+        element_size = (erosion_size, erosion_size)
+        element = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, element_size)
+        inner_mask = np.zeros((height, width, 1), np.uint8)
+        cv2.erode(outer_mask, element, dst=inner_mask)
+        mask = outer_mask - inner_mask
+        blended_section = np.uint8(fore_coeff * mask / 255 * input_img +(1 - fore_coeff) * mask / 255 * background_img)
+        inverse_mask = 255 - mask
+        inverse_mask = inverse_mask / 255  # convert to 1s and 0s
+        merged_img = inverse_mask * merged_img + blended_section
+        outer_mask = inner_mask
+    rows, cols, channels = inner_mask.shape
+    for i in range(0, rows):
+        for j in range(0, cols):
+            if inner_mask[i, j] == np.uint8(255):
+                bottom_row = i
+                break
+    merged_img = merged_img[0:bottom_row, 0:cols]
+    return merged_img
 
 
