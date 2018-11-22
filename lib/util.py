@@ -236,9 +236,6 @@ def blend_cropped_image(background_img, input_img):
     cropped_img_binary = np.zeros((height, width, 1), np.uint8)
     cropped_img_gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
     cv2.threshold(cropped_img_gray, 0, 255, cv2.THRESH_BINARY, cropped_img_binary)
-#    print(cropped_img_gray.shape)
-#    print(cropped_img_binary.shape)
-#    input("ENter")
     concat_image = np.concatenate((cropped_img_gray, cropped_img_binary[:,:,0]),axis=1)
     merged_img = np.uint8((255 - cropped_img_binary) / 255) * background_img + input_img
     element_sizes = [(5, 0)]
