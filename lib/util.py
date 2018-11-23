@@ -134,6 +134,7 @@ def sort_order(img1,img2,body1,body2):
     return img1,img2,body1,body2
 
 def blend_or_cut(body1,body2):
+    print(body2[0][2],body1[0][2])
     if body2[0][2]-body1[0][2]<600:
         print("Bodies close, Implementing GrabCut")
         return "grabcut"
