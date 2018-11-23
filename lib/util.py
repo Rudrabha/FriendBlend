@@ -163,13 +163,7 @@ def grabcut(img1,img2,body1,body2):
         cv2.grabCut(foreground, mask,rect,backgroundModel,foregroundModel,1,cv2.GC_INIT_WITH_MASK)
         mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
         img = foreground*mask2[:,:,np.newaxis]
-#        op_image = np.zeros(img1.shape)
-#        for i in range(op_image.shape[0]):
-#            for j in range(op_image.shape[1]):
-#                if img[i,j,1]==0:
-#                    op_image[i,j]=background[i,j]
-#                else:
-#                    op_image[i,j]=foreground[i,j]
+
         return img,background
     else:
         foreground = img2.copy()
@@ -177,22 +171,14 @@ def grabcut(img1,img2,body1,body2):
         rect = (a2,b2,c2,d2)
         for i in range(a2,c2):
             for j in range(b2,d2):
-#                sys.stdout.write('%s %s\r' %(i,j))
                 mask[j,i] = cv2.GC_PR_FGD
-#                sys.stdout.flush()
         for i in range(a2+w2-5,c2-w2+5):
             for j in range(b2+h2-5,b2+int(1*h2)+5):
                 mask[j,i] = cv2.GC_FGD
         cv2.grabCut(foreground, mask,rect,backgroundModel,foregroundModel,1,cv2.GC_INIT_WITH_MASK)
         mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
         img = foreground*mask2[:,:,np.newaxis]
-#        op_image = np.zeros(img1.shape)
-#        for i in range(op_image.shape[0]):
-#            for j in range(op_image.shape[1]):
-#                if img[i,j,1]==0:
-#                    op_image[i,j]=background[i,j]
-#                else:
-#                    op_image[i,j]=foreground[i,j]
+
         return img,background
 
 def alpha_blend(img1, img2, body1, body2):
@@ -200,7 +186,6 @@ def alpha_blend(img1, img2, body1, body2):
     col_start = body1[0][2]
     col_end= body2[0][0]
     if col_start>col_end:
-#        print("swapping")
         img_temp = img1.copy()
         img1=img2.copy()
         img2 = img_temp.copy()
