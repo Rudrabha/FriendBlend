@@ -11,8 +11,8 @@ def lab_contrast(img, f=7):
 	op_img = cv.cvtColor(i_lab, cv.COLOR_LAB2BGR)
 	return op_img
 
-def detect_body(img):
-    var = 1.5
+def detect_body(img,n=1):
+    var = 1.3
     iter=0
     face_cascade = cv2.CascadeClassifier('lib/haarcascade_frontalface_default.xml')
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -23,25 +23,52 @@ def detect_body(img):
         faces = face_cascade.detectMultiScale(gray, var, 5)
         if iter>=5:
             break
-#    list1=[]
+    list1=[]
     dist=0
-    for (x,y,w,h) in faces:
-        x1 = int(x-int(1.5*w))
-        if x1<0:
-            x1=0
-        y1 = int(y-h)
-        if y1<0:
-            y1=0
-        x2 = x+int(2.2*w)
-        if x2>img.shape[1]:
-            x2=img.shape[1]
-        y2 = img.shape[0]
-        area = ((x2-x1) * (y2-y1))
-        if dist < area:
-            dist = area
-            list1 = [(x1,y1,x2,y2,w,h)]
-    img = cv2.rectangle(img,(list1[0][0],list1[0][1]),(list1[0][2],list1[0][3]),(255,0,0),2)
-    img = cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
+    if n==1:
+        for (x,y,w,h) in faces:
+            x1 = int(x-int(1.5*w))
+            if x1<0:
+                x1=0
+            y1 = int(y-h)
+            if y1<0:
+                y1=0
+            x2 = x+int(2.2*w)
+            if x2>img.shape[1]:
+                x2=img.shape[1]
+            y2 = img.shape[0]
+            area = ((x2-x1) * (y2-y1))
+            if dist < area:
+                dist = area
+                list1 = [(x1,y1,x2,y2,w,h)]
+        a,b,c,d,w,h = list1[0]
+        img = cv2.rectangle(img,(a,b),(c,d),(255,0,0),2)
+        img = cv2.rectangle(img,(int(a+1.5*w),int(b+h)),(int(a+2.5*w),b+2*h),(255,0,0),2)
+        return list1,img
+    if n==2 and len(faces)==2:
+        for (x,y,w,h) in faces:
+            x1 = int(x-int(1.5*w))
+            x1=max(x1,0)
+            y1 = int(y-h)
+            y1=max(y1,0)
+            x2 = x+int(2.2*w)
+            if x2>img.shape[1]:
+                x2=img.shape[1]
+            y2 = img.shape[0]
+            img = cv2.rectangle(img,(x1,y1),(x2,y2),(255,0,0),2)
+            img = cv2.rectangle(img,(x,y),(int(x+w),y+h),(255,0,0),2)
+            list1.append((x1,y1,x2,y2,w,h))
+        x1=min(list1[0][0],list1[1][0])
+        y1=min(list1[0][1],list1[1][1])
+        x2=max(list1[0][2],list1[1][2])
+        y2=max(list1[0][3],list1[1][3])
+        w=list1[0][4]+list1[1][4]
+        w=list1[0][5]+list1[1][5]
+        list1=[(x1,y1,x2,y2,w,h)]
+        return list1,img
+    else:
+        print("Error in detecting multiple faces. Exitting application")
+        sys.exit()
     return list1,img
 
 
@@ -121,6 +148,7 @@ def transform_points(pt1, homography_matrix):
     return new_points
 
 def sort_order(img1,img2,body1,body2):
+    #body1 will be left and body2 should be right
     col_start = body1[0][2]
     col_end= body2[0][0]
     if col_start>col_end:
@@ -134,8 +162,7 @@ def sort_order(img1,img2,body1,body2):
     return img1,img2,body1,body2
 
 def blend_or_cut(body1,body2):
-    print(body2[0][2],body1[0][2])
-    if body2[0][2]-body1[0][2]<600:
+    if body2[0][0]-body1[0][2]<50:
         print("Bodies close, Implementing GrabCut")
         return "grabcut"
     else:
@@ -146,24 +173,26 @@ def grabcut(img1,img2,body1,body2):
 
     a1,b1,c1,d1,w1,h1 = body1[0]
     a2,b2,c2,d2,w2,h2 = body2[0]
-    
-    mask = np.zeros(img1.shape[:2],np.uint8)
+    print(body1,body2)
+    print(img2.shape)
+    mask = np.zeros(img2.shape[:2],np.uint8)
     backgroundModel = np.zeros((1,65),np.float64)
     foregroundModel = np.zeros((1,65),np.float64)
     if w1*h1 > w2*h2:
         foreground = img1.copy()
         background = img2.copy()
+        print(mask.shape)
         rect = (a1,b1,c1,d1)
+        print(rect)
         for i in range(a1,c1):
             for j in range(b1,d1):
                 mask[j,i] = cv2.GC_PR_FGD
         for i in range(a1+w1-5,c1-w1+5):
             for j in range(b1+h1-5,b1+int(1*h1)+5):
                 mask[j,i] = cv2.GC_FGD
-        cv2.grabCut(foreground, mask,rect,backgroundModel,foregroundModel,1,cv2.GC_INIT_WITH_MASK)
+        cv2.grabCut(foreground,mask,rect,backgroundModel,foregroundModel,1,cv2.GC_INIT_WITH_MASK)
         mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
         img = foreground*mask2[:,:,np.newaxis]
-
         return img,background
     else:
         foreground = img2.copy()
@@ -178,7 +207,6 @@ def grabcut(img1,img2,body1,body2):
         cv2.grabCut(foreground, mask,rect,backgroundModel,foregroundModel,1,cv2.GC_INIT_WITH_MASK)
         mask2 = np.where((mask==2)|(mask==0),0,1).astype('uint8')
         img = foreground*mask2[:,:,np.newaxis]
-
         return img,background
 
 def alpha_blend(img1, img2, body1, body2):
