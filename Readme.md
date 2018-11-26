@@ -4,7 +4,7 @@ The major goal for this project would be to implement FriendBlend (https://web.s
 
 Team Members are - \
 Rudrabha Mukhopadhyay \
-Sangeeth Reddy Battu \
+Sangeeth Reddy Battu 
 
 
 
