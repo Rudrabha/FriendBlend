@@ -23,7 +23,6 @@ def detect_body(img):
         faces = face_cascade.detectMultiScale(gray, var, 5)
         if iter>=5:
             break
-#    list1=[]
     dist=0
     for (x,y,w,h) in faces:
         x1 = int(x-int(1.5*w))
@@ -124,7 +123,6 @@ def sort_order(img1,img2,body1,body2):
     col_start = body1[0][2]
     col_end= body2[0][0]
     if col_start>col_end:
-        print("swapping")
         img_temp = img1.copy()
         img1=img2.copy()
         img2 = img_temp.copy()
@@ -133,9 +131,8 @@ def sort_order(img1,img2,body1,body2):
         body2 = body_temp.copy()
     return img1,img2,body1,body2
 
-def blend_or_cut(body1,body2):
-    print(body2[0][2],body1[0][2])
-    if body2[0][2]-body1[0][2]<600:
+def blend_or_cut(body1,body2, n=500):
+    if body2[0][2]-body1[0][2]<n:
         print("Bodies close, Implementing GrabCut")
         return "grabcut"
     else:
@@ -217,7 +214,6 @@ def crop_image(img, H):
 	return img[top_row:bottom_row, 0:cols]
 
 def blend_cropped_image(background_img, input_img):
-    
     height, width, channels = input_img.shape
     cropped_img_binary = np.zeros((height, width, 1), np.uint8)
     cropped_img_gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY)
