@@ -242,4 +242,9 @@ def blend_cropped_image(background_img, input_img):
     merged_img = merged_img[0:bottom_row, 0:cols]
     return merged_img
 
+def blur_img(img):
+	blur = cv2.GaussianBlur(img,(3,3),0)
+	return blur
+
+
 

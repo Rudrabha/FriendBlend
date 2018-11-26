@@ -66,6 +66,7 @@ if args.technique == "auto":
 		grab,bck = grabcut(homography_warped_1,Image_2,body_1_homographed,body_2)
 		op_image = blend_cropped_image(bck,grab)
 		op_image = crop_image(op_image, homography_matrix)
+		op_image = blur_img(op_image)
 	else:
 		body_1_homographed = [(a,b,c,d)]
 		op_image = alpha_blend(homography_warped_1,Image_2,body_1_homographed,body_2)
@@ -77,6 +78,7 @@ elif args.technique=="grabcut":
 	grab,bck = grabcut(homography_warped_1,Image_2,body_1_homographed,body_2)
 	op_image = blend_cropped_image(bck,grab)
 	op_image = crop_image(op_image, homography_matrix)	
+	op_image = blur_img(op_image)
 
 elif args.technique=="alphablend":
 	print ("Implementing alpha blending")
