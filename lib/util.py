@@ -162,7 +162,7 @@ def sort_order(img1,img2,body1,body2):
     return img1,img2,body1,body2
 
 def blend_or_cut(body1,body2):
-    if body2[0][0]-body1[0][2]<50:
+    if body2[0][0]-body1[0][2]<100:
         print("Bodies close, Implementing GrabCut")
         return "grabcut"
     else:
@@ -173,8 +173,6 @@ def grabcut(img1,img2,body1,body2):
 
     a1,b1,c1,d1,w1,h1 = body1[0]
     a2,b2,c2,d2,w2,h2 = body2[0]
-    print(body1,body2)
-    print(img2.shape)
     mask = np.zeros(img2.shape[:2],np.uint8)
     backgroundModel = np.zeros((1,65),np.float64)
     foregroundModel = np.zeros((1,65),np.float64)
