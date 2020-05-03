@@ -8,14 +8,14 @@ Sangeeth Reddy Battu
 
 ### To run FriendBlend
 
-python main.py --inp1 *Path to input file 1* --inp2 *Path to input file 2* 
+`python main.py --inp1 *Path to input file 1* --inp2 *Path to input file 2*` 
 
 To specify the path to output file, 
 
-python main.py --inp1 *Path to input file 1* --inp2 *Path to input file 2* --op *Path to output file*
+`python main.py --inp1 *Path to input file 1* --inp2 *Path to input file 2* --op *Path to output file*`
 
 The program with automatically try to find whether it should use grabcut or alpha blending. To override this, 
 
-python main.py --inp1 *Path to input file 1* --inp2 *Path to input file 2* --technique *grabcut/alphablend*
+`python main.py --inp1 *Path to input file 1* --inp2 *Path to input file 2* --technique [[grabcut|alphablend]]`
 
 
